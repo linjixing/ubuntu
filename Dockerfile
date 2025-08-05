@@ -18,7 +18,11 @@ RUN export DEBIAN_FRONTEND=noninteractive; \
     echo "set termencoding=utf-8" >> /etc/vim/vimrc; \
     echo "set encoding=utf-8" >> /etc/vim/vimrc; \
     curl -fsSL https://deb.nodesource.com/setup_22.x | bash - ; \
-    apt install -y openssh-server cron telnet net-tools iputils-ping iproute2 php8.4 php8.4-cli php8.4-fpm php8.4-common php8.4-mysql php8.4-xml php8.4-curl php8.4-gd php8.4-imagick php8.4-mbstring php8.4-zip php8.4-bcmath php8.4-intl php8.4-soap php8.4-redis php8.4-memcached php8.4-opcache php8.4-xdebug nginx golang-go python3 python3-pip nodejs supervisor git --no-install-recommends; \
+    apt install -y openssh-server cron telnet net-tools iputils-ping iproute2 \
+    php8.4 php8.4-cli php8.4-fpm php8.4-common php8.4-mysql php8.4-xml php8.4-curl \
+    php8.4-gd php8.4-imagick php8.4-mbstring php8.4-zip php8.4-bcmath php8.4-intl \
+    php8.4-soap php8.4-redis php8.4-memcached php8.4-opcache php8.4-xdebug nginx \
+    golang-go python3 python3-pip nodejs supervisor git --no-install-recommends; \
     apt-get clean; \
     mkdir /var/run/sshd; \
     chmod +x /entrypoint.sh
