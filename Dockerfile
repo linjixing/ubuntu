@@ -1,34 +1,27 @@
 FROM ubuntu:22.04
 
-LABEL org.opencontainers.image.source https://github.com/linjixing/ubuntu
-
-ENV TZ=Asia/Shanghai
-
-COPY entrypoint.sh /entrypoint.sh
+COPY entrypoint.sh /
 
 RUN export DEBIAN_FRONTEND=noninteractive; \
-    apt update; \
-    apt install -y software-properties-common tzdata curl wget unzip vim sudo; \
-    add-apt-repository -y ppa:ondrej/php; \
-    add-apt-repository -y ppa:longsleep/golang-backports; \
-    apt update; \
-    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime; \
-    echo $TZ > /etc/timezone; \
+    apt-get update; \
+    apt-get install -y vim tzdata ca-certificates curl wget git unzip iputils-ping \
+    openssh-server sudo cron net-tools iproute2 systemd --no-install-recommends; \
+    curl -fsSL https://deb.nodesource.com/setup_22.x | bash -; \
+    apt-get install -y nginx nodejs python3-pip supervisor --no-install-recommends; \
+    python3 -m pip install --upgrade trzsz; \
+    rm -rf /var/lib/apt/lists/*; \
+    mkdir /var/run/sshd; \
+    echo "alias ll='ls -la'" >> /etc/bash.bashrc; \
+    echo "alias reboot='sudo kill -SIGTERM 1'" >> /etc/bash.bashrc; \
+    ln -snf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime; \
+    echo "Asia/Shanghai" > /etc/timezone; \
     echo "set fileencodings=utf-8,gbk,utf-16le,cp1252,iso-8859-15,ucs-bom" >> /etc/vim/vimrc; \
     echo "set termencoding=utf-8" >> /etc/vim/vimrc; \
     echo "set encoding=utf-8" >> /etc/vim/vimrc; \
-    curl -fsSL https://deb.nodesource.com/setup_22.x | bash - ; \
-    apt install -y openssh-server cron telnet net-tools iputils-ping iproute2 \
-    php8.4 php8.4-cli php8.4-fpm php8.4-common php8.4-mysql php8.4-xml php8.4-curl \
-    php8.4-gd php8.4-imagick php8.4-mbstring php8.4-zip php8.4-bcmath php8.4-intl \
-    php8.4-soap php8.4-redis php8.4-memcached php8.4-opcache php8.4-xdebug nginx \
-    golang-go python3 python3-pip nodejs supervisor git --no-install-recommends; \
-    apt-get clean; \
-    mkdir /var/run/sshd; \
+    curl -Lo /usr/bin/ttyd https://github.com/tsl0922/ttyd/releases/download/1.7.7/ttyd.x86_64; \
+    chmod +x /usr/bin/ttyd; \
     chmod +x /entrypoint.sh
-
-EXPOSE 22
 
 ENTRYPOINT ["/entrypoint.sh"]
 
-CMD ["/usr/sbin/sshd", "-D"]
+CMD ["supervisord","-c","/etc/supervisord.conf"]
