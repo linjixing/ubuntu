@@ -4,8 +4,8 @@ COPY entrypoint.sh /
 
 RUN export DEBIAN_FRONTEND=noninteractive; \
     apt-get update; \
-    apt-get install -y vim tzdata ca-certificates curl wget git unzip iputils-ping \
-    openssh-server sudo cron net-tools iproute2 systemd --no-install-recommends; \
+    apt-get install -y sudo systemd ca-certificates net-tools vim curl wget git unzip \
+    openssh-server tzdata cron screen iputils-ping iproute2 --no-install-recommends; \
     curl -fsSL https://deb.nodesource.com/setup_22.x | bash -; \
     apt-get install -y nginx nodejs python3-pip supervisor --no-install-recommends; \
     python3 -m pip install --upgrade trzsz; \

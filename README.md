@@ -1,9 +1,11 @@
-# ubuntu
+# Ubuntu 22.04
 
 # Build and Push
 
 ```
-docker build -t linjixing/ubuntu .
+docker build -t ubuntu .
+docker tag ubuntu linjixing/ubuntu
+docker login
 docker push linjixing/ubuntu
 ```
 
@@ -16,3 +18,7 @@ docker run -dit --name ubuntu -h ubuntu \
     -p 7681:7681 \
     linjixing/ubuntu
 ```
+
+# Docs
+
+- https://trzsz.github.io/cn/

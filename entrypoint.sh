@@ -7,6 +7,9 @@ if [ ! -d "/home/$USER" ]; then
     mkdir -p /home/$USER/bin
     mkdir -p /home/$USER/logs
     mkdir -p /home/$USER/conf/supervisor
+    mkdir -p /home/$USER/sh
+    echo "#!/usr/bin/env sh" > /home/$USER/sh/init.sh
+    chmod +x /home/$USER/sh/init.sh
     mkdir -p /home/$USER/.ssh
     chmod 700 /home/$USER/.ssh
     echo $RSA > /home/$USER/.ssh/authorized_keys
@@ -18,7 +21,7 @@ cat > /etc/supervisord.conf << EOF
 [supervisord]
 nodaemon=true
 pidfile=/var/run/supervisord.pid
-logfile=/dev/null
+logfile=/tmp/supervisord.log
 
 [include]
 files=/home/$USER/conf/supervisor/*.conf
@@ -34,13 +37,30 @@ serverurl=unix:///var/run/supervisor.sock
 
 [program:sshd]
 command=/usr/sbin/sshd -D
+logfile=/tmp/sshd.log
 autostart=true
 autorestart=true
+
+[program:cron]
+command=/usr/sbin/cron -f
+logfile=/tmp/cron.log
+autostart=true
+autorestart=true
+
+[program:init]
+command=/home/$USER/sh/init.sh
+logfile=none
+autostart=true
+autorestart=false
+startretries=0
+startsecs=0
+user=$USER
 
 [program:ttyd]
 environment=HOME="/home/$USER",USER="$USER",LOGNAME="$USER"
 command=/usr/bin/ttyd -t enableTrzsz=true -c $USER:password -W bash
 directory=/home/$USER
+logfile=/home/$USER/logs/ttyd.log
 autostart=true
 autorestart=true
 user=$USER
